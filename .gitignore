@@ -1,0 +1,4 @@
+/env
+ids.py
+settings.json
+*pycache*
