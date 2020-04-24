@@ -82,7 +82,7 @@ class RequestData():
                         'team2_id': result['opponents'][1]['opponent']['id'],
                         'api_id': result['id'],
                         'date': result['begin_at'],
-                        'bo': f"{result['match_type']} {result['number_of_games']}",
+                        'bo': result['number_of_games'],
                         'score_t1': result['results'][0]['score'],
                         'score_t2': result['results'][1]['score'],
                         'status': result['status'],

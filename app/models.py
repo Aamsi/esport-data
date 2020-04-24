@@ -1,5 +1,7 @@
 from app import db
+from app.data_request import RequestData
 
+# data = RequestData
 # Learning to create a db with sql alchemy in flask context.
 
 class League(db.Model):
@@ -7,6 +9,13 @@ class League(db.Model):
     name = db.Column(db.String(64), index=True, unique=True)
     api_id = db.Column(db.Integer, index=True, unique=True)
     series = db.relationship('Serie', backref='league', lazy='dynamic')
+
+    # def insert_into_leagues(self):
+    #     for league in data.leagues:
+    #         league_to_add = League(name=league['name'],
+    #         api_id=league['api_id'])
+    #         db.session.add(league_to_add)
+    #         db.session.commit
 
     def __repr__(self):
         return f"<League {self.name}>"

@@ -9,4 +9,4 @@ app_lol.config.from_object(Config)
 db = SQLAlchemy(app_lol)
 migrate = Migrate(app_lol, db)
 
-from app import routes, models
+from app import routes, models, insert_into_db
