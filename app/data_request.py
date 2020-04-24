@@ -1,10 +1,11 @@
 import requests
 import datetime
+from app import app_lol
 
-from ids import TOKEN
 """
     Take charge of requesting data to Pandoscore and build an ordered object to treat
 """
+
 
 class RequestData():
     """
@@ -24,6 +25,8 @@ class RequestData():
         for more information about events hierarchy, visit https://developers.pandascore.co/doc/index.htm#section/Introduction/Events-hierarchy
     """
 
+    API_KEY = app_lol.config["API_KEY"]
+
     def __init__(self):
         self.leagues = []
         self.series = []
@@ -33,7 +36,7 @@ class RequestData():
         self.building = self.build()
 
     def get_leagues(self):
-        res_leagues = requests.get(f"https://api.pandascore.co/lol/leagues?page[size]=100&token={TOKEN}")
+        res_leagues = requests.get(f"https://api.pandascore.co/lol/leagues?page[size]=100&token={self.API_KEY}")
         results_leagues = res_leagues.json()
         for result in results_leagues:
             if result['name'] in self.leagues_wanted:
@@ -45,7 +48,7 @@ class RequestData():
     def get_series(self):
         now = datetime.datetime.now()
         for league in self.leagues:
-            res_series = requests.get(f"https://api.pandascore.co/leagues/{league['api_id']}/series?pages[size]=100&token={TOKEN}")
+            res_series = requests.get(f"https://api.pandascore.co/leagues/{league['api_id']}/series?pages[size]=100&token={self.API_KEY}")
             results_series = res_series.json()
             for result in results_series:
                 if result['year'] >= now.year - 1:
@@ -57,7 +60,7 @@ class RequestData():
     
     def get_teams(self):
         for serie in self.series:
-            res_teams = requests.get(f"https://api.pandascore.co/lol/series/{serie['api_id']}/teams?pages[size]=100&token={TOKEN}")
+            res_teams = requests.get(f"https://api.pandascore.co/lol/series/{serie['api_id']}/teams?pages[size]=100&token={self.API_KEY}")
             results_teams = res_teams.json()
             for result in results_teams:
                 self.teams.append({
@@ -69,7 +72,7 @@ class RequestData():
     
     def get_matches(self):
         for serie in self.series:
-            res_teams = requests.get(f"https://api.pandascore.co/series/{serie['api_id']}/matches?pages[size]=30&token={TOKEN}")
+            res_teams = requests.get(f"https://api.pandascore.co/series/{serie['api_id']}/matches?pages[size]=30&token={self.API_KEY}")
             results_teams = res_teams.json()
             for result in results_teams:
                 try:
@@ -82,22 +85,22 @@ class RequestData():
                         'bo': f"{result['match_type']} {result['number_of_games']}",
                         'score_t1': result['results'][0]['score'],
                         'score_t2': result['results'][1]['score'],
+                        'status': result['status'],
+                        'winner_id': result['winner_id'],
                     })
                 except IndexError:
                     print("Les donnees du match ne sont pas disponibles")
 
     def build(self):
-        self.request_data_leagues()
         self.get_leagues()
         self.get_series()
         self.get_teams()
-        # self.get_matches()
+        self.get_matches()
 
-    def test(self):
-        print(f"Leagues: {self.leagues} \n")
-        print(f"Series: {self.series} \n")
-        print(f"Teams: {self.teams} \n")
-        print(f"Matches: {self.matches} \n")
+    # def test(self):
+    #     print(f"Leagues: {self.leagues} \n")
+    #     print(f"Series: {self.series} \n")
+    #     print(f"Teams: {self.teams} \n")
+    #     print(f"Matches: {self.matches} \n")
 
-# test_datas = RequestData()
-# test_datas.test()
+

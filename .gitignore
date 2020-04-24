@@ -1,4 +1,6 @@
-/env
-ids.py
+env/
+.flaskenv
 settings.json
 *pycache*
+.idea/
+migrations/
